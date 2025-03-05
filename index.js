@@ -3,6 +3,9 @@ const app = express();
 const port = 8080;
 const path = require("path");
 const {v4:uuidv4} = require("uuid");
+const methodOverride = require("method-override");
+
+app.use(methodOverride("_method"));
 
 app.set("view engine","ejs");
 app.set("views",path.join(__dirname,"views"));
@@ -41,17 +44,29 @@ app.post("/posts",(req,res)=>{
     let {id} = uuidv4();
     posts.push({id,user,content});
     // res.send(`Welcome ${user} your content ${content} is posted...`);
-    res.redirect("/posts");
+    res.redirect('/posts');
 });
 
 app.get("/posts/:id",(req,res)=>{
     let{id} = req.params;
     let post = posts.find((p)=>id==p.id);
-    // res.render("show.ejs",{post});
-    res.send(`You wish to view id ${id}`);
+    res.render("show.ejs",{post});
+    // res.send(`You wish to view id ${id}`);
 });
 
+app.patch("/posts/:id",(req,res)=>{
+    let {id} = req.params;
+    let post = posts.find((p)=>id==p.id);
+    let newContent = req.body.content;
+    post.content = newContent;
+    res.redirect("/posts");
+});
 
+app.get("/posts/:id/edit",(req,res)=>{
+    let {id} = req.params;
+    let post = posts.find((p)=>id==p.id);
+    res.render("edit.ejs",{post});
+});
 app.listen(port,()=>{
     console.log("App listening on port ",port);
 });
