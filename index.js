@@ -41,7 +41,7 @@ app.get("/posts",(req,res)=>{
 
 app.post("/posts",(req,res)=>{
     let {user,content} = req.body;
-    let {id} = uuidv4();
+    let id = uuidv4();
     posts.push({id,user,content});
     // res.send(`Welcome ${user} your content ${content} is posted...`);
     res.redirect('/posts');
@@ -67,6 +67,12 @@ app.get("/posts/:id/edit",(req,res)=>{
     let post = posts.find((p)=>id==p.id);
     res.render("edit.ejs",{post});
 });
+
+app.delete("/posts/:id",(req,res)=>{
+    let {id} = req.params;
+    posts=posts.filter((p)=>p.id!=id);
+    res.redirect("/posts");
+})
 app.listen(port,()=>{
     console.log("App listening on port ",port);
 });
